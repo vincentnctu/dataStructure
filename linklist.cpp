@@ -45,6 +45,19 @@ void dataList() {
   cout << endl;
 }
 
+void dataClear() {
+  ELEMENT *ptr; 
+  ptr = Head;
+  
+  ELEMENT *cur;
+  while (ptr) {
+    cur = ptr;
+    ptr = ptr->next;
+    delete cur;
+  }
+  Head = NULL;
+}
+
 void dataDelete(int data) {
   if (!Head) return;
   
@@ -111,8 +124,13 @@ int main(int argc, char *argv[]) {
   dataDelete(-1);
   dataDelete(4);
   dataList();
+
   dataDeleteTrail();
   dataList();
+
   dataDeleteHead();
+  dataList();
+
+  dataClear();
   dataList();
 }
