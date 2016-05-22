@@ -45,6 +45,23 @@ void dataList() {
   cout << endl;
 }
 
+void dataReverseList() {
+  ELEMENT *current;
+  ELEMENT *previous;
+  ELEMENT *ptr;
+
+  current = previous = Head;
+  current = current->next;
+  previous->next = NULL;
+  while (current) {
+    ptr = current;
+    current = current->next;
+    ptr->next = previous;
+    previous = ptr;
+  }
+  Head = previous;
+}
+
 void dataClear() {
   ELEMENT *ptr; 
   ptr = Head;
@@ -113,11 +130,18 @@ int main(int argc, char *argv[]) {
   Head->data = 1;
   Head->next = NULL;
 
+  dataList();
+  dataReverseList();
+  dataList();
   dataInsertTrail(2);
+  dataList();
+  return 0;
   dataInsertTrail(3);
   dataInsertTrail(4);
   dataInsertHead(0);
   dataInsertHead(-1);
+  
+  dataReverseList();
   dataList();
 
   dataDelete(1);
