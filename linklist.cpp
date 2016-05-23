@@ -7,50 +7,70 @@ typedef struct element {
   struct element *next;
 } ELEMENT;
 
-static ELEMENT *Head = NULL;
+static ELEMENT *Head1 = NULL;
+static ELEMENT *Head2 = NULL;
 
-void dataInsertTrail(int data) {
+void dataInsertTail(ELEMENT **head, int data) {
   ELEMENT *pElement;
   pElement = new element;
   pElement->data = data;
-  pElement->next = NULL;
-
-  ELEMENT *ptr = Head;
-  while (ptr && ptr->next != NULL) {
-    ptr = ptr->next; 
+  pElement->next = *head;
+  
+  if (!*head) {
+    *head = pElement;
+    pElement->next = *head;
+    return;
   }
 
+  ELEMENT *ptr = *head;
+  while (ptr && ptr->next != *head) {
+    ptr = ptr->next;
+  }
   ptr->next = pElement;
 }
 
-void dataInsertHead(int data) {
+void dataInsertHead(ELEMENT **head, int data) {
   ELEMENT *pElement;
   pElement = new element;
   pElement->data = data;
+  pElement->next = *head;
+  
+  if (!*head) {
+    *head = pElement;
+    pElement->next = *head;
+    return;
+  }
 
-  ELEMENT *pHead;
-  pHead = Head;
-  Head = pElement;
-  Head ->next = pHead;
+  ELEMENT *ptr = *head;
+  while (ptr && ptr->next != *head) {
+    ptr = ptr->next;
+  }   
+  *head = pElement;
+  ptr->next = *head;
 }
 
-void dataList() {
+void dataList(ELEMENT *head) {
   ELEMENT *ptr; 
-  ptr = Head;
   
-  while (ptr) {
-    cout << ptr->data << " ";
+  if (!head) {
+    cout << "Invalid data list" << endl;
+    return;
+  }  
+
+  ptr = head;
+  do {
+    cout << "\'" << ptr->data << "\'" << " ";
     ptr = ptr->next;
-  }
+  } while (ptr != head);
   cout << endl;
 }
 
-void dataReverseList() {
+void dataReverseList(ELEMENT **head) {
   ELEMENT *current;
   ELEMENT *previous;
   ELEMENT *ptr;
 
-  current = previous = Head;
+  current = previous = *head;
   current = current->next;
   previous->next = NULL;
   while (current) {
@@ -59,30 +79,30 @@ void dataReverseList() {
     ptr->next = previous;
     previous = ptr;
   }
-  Head = previous;
+  *head = previous;
 }
 
-void dataClear() {
+void dataClear(ELEMENT **head) {
   ELEMENT *ptr; 
-  ptr = Head;
+  ptr = *head;
   
   ELEMENT *cur;
-  while (ptr) {
+  while (ptr && ptr->next != *head) {
     cur = ptr;
     ptr = ptr->next;
     delete cur;
   }
-  Head = NULL;
+  *head = NULL;
 }
 
-void dataDelete(int data) {
-  if (!Head) return;
+void dataDelete(ELEMENT **head, int data) {
+  if (!head || !*head) return;
   
   cout << "Delete " << data << " from list" << endl;
-  ELEMENT *pCurrent = Head;
-  ELEMENT *pPrevious = Head;
+  ELEMENT *pCurrent = *head;
+  ELEMENT *pPrevious = *head;
 
-  while (pCurrent && pCurrent->next != NULL) {
+  while (pCurrent && pCurrent->next != *head) {
     if (pCurrent->data == data) {
       break;
     }
@@ -90,7 +110,7 @@ void dataDelete(int data) {
     pCurrent = pCurrent->next;
   }
   if (pPrevious == pCurrent) {
-    Head = pCurrent->next;
+    *head = pCurrent->next;
     
   } else {
     pPrevious->next = pCurrent->next;
@@ -98,26 +118,26 @@ void dataDelete(int data) {
   delete pCurrent;
 }
 
-void dataDeleteHead() {
-  if (!Head) return;
+void dataDeleteHead(ELEMENT **head) {
+  if (!head) return;
 
   cout << "Delete head data from list" << endl;
 
-  ELEMENT *ptr = Head;
-  Head = ptr->next;
+  ELEMENT *ptr = *head;
+  *head = ptr->next;
 
   delete ptr;
 }
 
-void dataDeleteTrail() {
-  if (!Head) return;
+void dataDeleteTail(ELEMENT *head) {
+  if (!head) return;
 
   cout << "Delete trail data from list" << endl;
 
-  ELEMENT *pCurrent = Head;
+  ELEMENT *pCurrent = head;
   ELEMENT *pPrevious = NULL;
 
-  while (pCurrent && pCurrent->next != NULL) {
+  while (pCurrent && pCurrent->next != head) {
     pPrevious = pCurrent;
     pCurrent = pCurrent->next;
   }
@@ -125,36 +145,60 @@ void dataDeleteTrail() {
   delete pCurrent;
 }
 
+void dataListConcatenate(ELEMENT *head1, ELEMENT *head2) {
+  ELEMENT *ptr1 = head1;
+
+  while (ptr1 && ptr1->next != head1) {
+    ptr1 = ptr1->next;
+  }
+
+  ptr1->next = head2;
+
+
+  ELEMENT *ptr2 = head2;
+  while (ptr2 && ptr2->next != head2) {
+    ptr2 = ptr2->next;
+  }
+
+  ptr2->next = head1;
+}
+
 int main(int argc, char *argv[]) {
-  Head = new element;
-  Head->data = 1;
-  Head->next = NULL;
+  ELEMENT **head1 = static_cast<ELEMENT **>(&Head1);
+  ELEMENT **head2 = static_cast<ELEMENT **>(&Head2);
 
-  dataList();
-  dataReverseList();
-  dataList();
-  dataInsertTrail(2);
-  dataList();
-  return 0;
-  dataInsertTrail(3);
-  dataInsertTrail(4);
-  dataInsertHead(0);
-  dataInsertHead(-1);
-  
-  dataReverseList();
-  dataList();
+  dataInsertTail(head1, 99);
+  dataInsertTail(head1, 100);
+  dataInsertTail(head1, 4);
+  dataList(*head1);
+  dataInsertHead(head1, 0);
+  dataList(*head1);
+  dataInsertHead(head1, -1);
+  dataList(*head1);
 
-  dataDelete(1);
-  dataDelete(-1);
-  dataDelete(4);
-  dataList();
+  dataInsertTail(head2, 9);
+  dataInsertTail(head2, 8);
+  dataInsertTail(head2, 7);
+  dataInsertHead(head2, 6);
+  dataInsertHead(head2, 5);
 
-  dataDeleteTrail();
-  dataList();
+  dataList(*head1);
+  dataList(*head2);
+  dataListConcatenate(*head1, *head2); 
+  dataList(*head1);
 
-  dataDeleteHead();
-  dataList();
+  //dataReverseList(head1);
+  //dataList(*head1);
+  //dataDelete(head1, -1);
+  //dataDelete(head1, 4);
+  //dataList(*head1);
 
-  dataClear();
-  dataList();
+  //dataDeleteTail(*head1);
+  //dataList(*head1);
+
+  //dataDeleteHead(head1);
+  //dataList(*head1);
+
+  //dataClear(head1);
+  //dataList(*head1);
 }
