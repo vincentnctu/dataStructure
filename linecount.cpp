@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     count++;
     //cout << line << endl;
     state = OUT;
-    for(auto c : line) {
+    for (auto c : line) {
       if (c != ' ' || c != '\n' || c != '\t')
         sword +=c; 
       //cout << "char: " << c << endl;
